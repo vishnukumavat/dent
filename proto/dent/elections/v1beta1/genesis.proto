@@ -1,0 +1,12 @@
+syntax = "proto3";
+package dent.elections.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "dent/elections/v1beta1/params.proto";
+
+option go_package = "dent/x/elections/types";
+
+// GenesisState defines the dent module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

@@ -1,0 +1,90 @@
+syntax = "proto3";
+package dent.elections.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "dent/elections/v1beta1/params.proto";
+import "dent/elections/v1beta1/elections.proto";
+
+option go_package = "dent/x/elections/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/dent/elections/v1beta1/params";
+  }
+
+  rpc IsVoterRegistered(QueryIsVoterRegisteredRequest) returns (QueryIsVoterRegisteredResponse) {
+    option (google.api.http).get = "/dent/elections/v1beta1/is_voter_registered/{wallet_address}";
+  }
+
+  rpc Candidate(QueryCandidateRequest) returns (QueryCandidateResponse) {
+    option (google.api.http).get = "/dent/elections/v1beta1/candidate/{candidate_id}";
+  }
+
+  rpc Candidates(QueryCandidatesRequest) returns (QueryCandidatesResponse) {
+    option (google.api.http).get = "/dent/elections/v1beta1/candidates";
+  }
+
+  rpc Poll(QueryPollRequest) returns (QueryPollResponse) {
+    option (google.api.http).get = "/dent/elections/v1beta1/poll/{poll_id}";
+  }
+
+  rpc Polls(QueryPollsRequest) returns (QueryPollsResponse) {
+    option (google.api.http).get = "/dent/elections/v1beta1/pools";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+
+// QueryIsVoterRegisteredRequest is request type for the Query/IsVoterRegistered RPC method.
+message QueryIsVoterRegisteredRequest {
+  string wallet_address = 1;
+}
+
+// QueryIsVoterRegisteredResponse is response type for the Query/IsVoterRegistered RPC method.
+message QueryIsVoterRegisteredResponse {
+  string wallet_address = 1;
+  bool is_voter_registered = 2;
+}
+
+
+message QueryCandidateRequest {
+  uint64 candidate_id = 1;
+}
+
+message QueryCandidateResponse {
+  Candidate candidate = 1;
+}
+
+message QueryCandidatesRequest {}
+
+message QueryCandidatesResponse {
+  repeated Candidate candidates = 1;
+}
+
+message QueryPollRequest {
+  uint64 poll_id = 1;
+}
+
+message QueryPollResponse {
+  Poll poll = 1;
+}
+
+message QueryPollsRequest {
+  bool is_active = 1;
+}
+
+message QueryPollsResponse {
+  repeated Poll pools = 1;
+}

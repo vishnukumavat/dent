@@ -1,0 +1,82 @@
+syntax = "proto3";
+package dent.elections.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+
+option go_package = "dent/x/elections/types";
+
+// Msg defines the Msg service.
+service Msg {
+    // AdminVoterRegisteration defines a method for creating new voter registeration request (only accessible via ADMIN)
+    rpc AdminVoterRegisteration(MsgAdminNewVoterRegistrationRequest) returns (MsgAdminNewVoterRegistrationResponse);
+    
+    // AdminCreateCandidate defines a method for creating new candidate for election (only accessible via ADMIN)
+    rpc AdminCreateCandidate(MsgCreateCandidateRequest) returns (MsgCreateCandidateResponse);
+    
+    // VoterRegisteration defines a method for creating new registering voter
+    rpc VoterRegisteration(MsgNewVoterRegisterationRequest) returns (MsgNewVoterRegisterationResponse);
+
+    // AdminCreatePoll defines a method for creating new poll
+    rpc AdminCreatePoll(MsgCreatePollRequest) returns (MsgCreatPollResponse);
+}
+
+
+// MsgAdminNewVoterRegistration defines an SDK message for creating a request for registering new voter.
+message MsgAdminNewVoterRegistrationRequest {
+    // admin_address specifies the address of the transaction initiator
+    string admin_address = 1;
+
+    // voter_wallet_address specifies the wallet address of the new voter
+    string voter_wallet_address = 2;
+  
+    // otp specifies the otp to validate the request made by voter
+    uint64 otp = 3;
+}
+message MsgAdminNewVoterRegistrationResponse {}
+
+// MsgAdminNewVoterRegistration defines an SDK message for creating a request for registering new voter.
+message MsgCreateCandidateRequest {
+    // name specifies the name of the candidate for election
+    string name = 1;
+
+    // party specifies the party of the candidate
+    string party = 2;
+
+    // admin_address specifies the address of the transaction initiator
+    string admin_address = 3;
+
+}
+message MsgCreateCandidateResponse {}
+
+
+// MsgNewVoterRegisterationRequest defines an SDK message for registering new voter.
+message MsgNewVoterRegisterationRequest {
+    // voter_wallet_address specifies the wallet address of the new voter
+    string voter_wallet_address = 1;
+  
+    // otp specifies the otp to validate the request made by voter
+    uint64 otp = 2;
+}
+message MsgNewVoterRegisterationResponse {}
+
+
+message MsgCreatePollRequest {
+    string poll_name = 1;
+    repeated uint64 candidate_ids = 2;
+    google.protobuf.Timestamp start_at = 3 [
+        (gogoproto.stdtime) = true, 
+        (gogoproto.nullable) = false
+    ];
+    google.protobuf.Duration poll_duration = 4 [
+        (gogoproto.nullable) = false,
+        (gogoproto.stdduration) = true,
+        (gogoproto.jsontag) = "poll_duration,omitempty",
+        (gogoproto.moretags) = "yaml:\"poll_duration\""
+    ];
+    string admin_address = 5;
+} 
+
+message MsgCreatPollResponse {}

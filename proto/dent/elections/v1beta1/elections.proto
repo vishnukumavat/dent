@@ -1,0 +1,56 @@
+syntax = "proto3";
+package dent.elections.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+option go_package = "dent/x/elections/types";
+
+message AdminNewVoterRegistrationRequest {
+    uint64 request_id = 1;
+    uint64 otp = 2;
+    string wallet_address = 3;
+    google.protobuf.Timestamp expire_at = 4 [
+        (gogoproto.stdtime) = true, 
+        (gogoproto.nullable) = false
+    ];
+}
+
+message Voter {
+    uint64 voter_id = 1;
+    string wallet_address = 2;
+}
+
+message Candidate {
+    uint64 id = 1;
+    string name = 2;
+    string party = 3;
+    google.protobuf.Timestamp created_at = 4 [
+        (gogoproto.stdtime) = true, 
+        (gogoproto.nullable) = false
+    ];
+}
+
+message PollOptions {
+    uint64 candidate_id = 1;
+    uint64 current_count = 2;
+}
+
+message Poll {
+    uint64 id = 1;
+    string poll_name = 2;
+    repeated PollOptions options = 3;
+    bool is_active = 4;
+    google.protobuf.Timestamp start_at = 5 [
+        (gogoproto.stdtime) = true, 
+        (gogoproto.nullable) = false
+    ];
+    google.protobuf.Duration poll_duration = 6 [
+        (gogoproto.nullable) = false,
+        (gogoproto.stdduration) = true,
+        (gogoproto.jsontag) = "poll_duration,omitempty",
+        (gogoproto.moretags) = "yaml:\"poll_duration\""
+    ];
+    bool is_ended = 7;
+}
