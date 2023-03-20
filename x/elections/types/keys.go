@@ -20,7 +20,7 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_elections"
 
-	AdminAddress = "dent1vm67pa3d2ddsz898m6mfejkzjm9wa3p4cesuwd"
+	AdminAddress = "dent1d7s35y2ljzyy6elv5l36f629drpeyfnud2l4cn"
 
 	VoterOTPLimit                          = 999999
 	NewVoterAdminRequestExpirationDuration = time.Minute * 10

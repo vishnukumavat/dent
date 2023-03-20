@@ -7,6 +7,7 @@
 
 - [Blockchain Setup](#project-setup)
 - [Architectural Flow](#architectural-diagram)
+- [Demo](#demo)
 
 # Project Explanation
 
@@ -122,3 +123,8 @@ Your blockchain in development can be configured with `config.yml` and `app.toml
 # Architectural Diagram
 
 <img width="833" alt="image" src="https://user-images.githubusercontent.com/43311385/226439106-ade99357-957c-4306-b90f-465aca0f7487.png">
+
+
+# Demo
+
+[https://youtu.be/bGW0NY06h2s](https://youtu.be/bGW0NY06h2s)
