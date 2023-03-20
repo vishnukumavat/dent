@@ -4,6 +4,7 @@ import (
 	time "time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // NewPoll returns a new poll object.
@@ -53,4 +54,29 @@ func MustUnmarshalPoll(cdc codec.BinaryCodec, value []byte) Poll {
 func UnmarshalPoll(cdc codec.BinaryCodec, value []byte) (poll Poll, err error) {
 	err = cdc.Unmarshal(value, &poll)
 	return poll, err
+}
+
+func NewVote(pollID uint64, voterAddress sdk.AccAddress) Vote {
+	return Vote{
+		PollId:       pollID,
+		VoterAddress: voterAddress.String(),
+	}
+}
+
+func MustMarshalVote(cdc codec.BinaryCodec, vote Vote) []byte {
+	return cdc.MustMarshal(&vote)
+}
+
+func MustUnmarshalVote(cdc codec.BinaryCodec, value []byte) Vote {
+	vote, err := UnmarshalVote(cdc, value)
+	if err != nil {
+		panic(err)
+	}
+
+	return vote
+}
+
+func UnmarshalVote(cdc codec.BinaryCodec, value []byte) (vote Vote, err error) {
+	err = cdc.Unmarshal(value, &vote)
+	return vote, err
 }

@@ -21,6 +21,15 @@ func removeDuplicateInt(intSlice []uint64) []uint64 {
 	return list
 }
 
+func ItemExists(array []uint64, item uint64) bool {
+	for _, v := range array {
+		if v == item {
+			return true
+		}
+	}
+	return false
+}
+
 // getNextPairIdWithUpdate increments request id by one and set it.
 func (k Keeper) getNextPollIDWithUpdate(ctx sdk.Context) uint64 {
 	id := k.GetLastPollID(ctx) + 1
@@ -88,4 +97,68 @@ func (k Keeper) UpdatePoll(ctx sdk.Context) {
 			k.SetPollByID(ctx, poll)
 		}
 	}
+}
+
+func (k Keeper) UpdateCount(ctx sdk.Context, pollID, candidateID uint64) {
+	poll, _ := k.GetPollBytID(ctx, pollID)
+	for _, option := range poll.Options {
+		if option.CandidateId == candidateID {
+			option.CurrentCount = option.CurrentCount + 1
+			break
+		}
+	}
+	fmt.Println(poll)
+	k.SetPollByID(ctx, poll)
+
+}
+
+func (k Keeper) ValidateVote(ctx sdk.Context, msg *types.MsgVoteRequest) error {
+	voterAddr, err := sdk.AccAddressFromBech32(msg.VoterAddress)
+	if err != nil {
+		return fmt.Errorf("invalid address %w", err)
+	}
+
+	if !k.IsValidVoter(ctx, voterAddr.String()) {
+		return types.ErrVoterNotRegistered
+	}
+
+	poll, found := k.GetPollBytID(ctx, msg.PollId)
+	if !found {
+		return types.ErrInvalidPollOrCandidateID
+	}
+
+	if poll.IsEnded || !poll.IsActive {
+		return types.ErrInactivePoll
+	}
+
+	found = false
+	for _, pollOption := range poll.Options {
+		if pollOption.CandidateId == msg.CandidateId {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return types.ErrInvalidOption
+	}
+
+	_, found = k.GetCandidateBytID(ctx, msg.CandidateId)
+	if !found {
+		return types.ErrInvalidPollOrCandidateID
+	}
+	_, found = k.GetVote(ctx, msg.PollId, voterAddr)
+	if found {
+		return types.ErrAlreadyVoteAdded
+	}
+	return nil
+}
+
+func (k Keeper) Vote(ctx sdk.Context, msg *types.MsgVoteRequest) error {
+	if err := k.ValidateVote(ctx, msg); err != nil {
+		return err
+	}
+	newVote := types.NewVote(msg.PollId, sdk.MustAccAddressFromBech32(msg.VoterAddress))
+	k.SetVote(ctx, newVote)
+	k.UpdateCount(ctx, msg.PollId, msg.CandidateId)
+	return nil
 }

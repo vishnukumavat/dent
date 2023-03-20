@@ -305,3 +305,21 @@ func (k Keeper) GetAllPools(ctx sdk.Context) (pools []types.Poll) {
 	})
 	return pools
 }
+
+// SetVote stores the particular vote by voter.
+func (k Keeper) SetVote(ctx sdk.Context, vote types.Vote) {
+	store := ctx.KVStore(k.storeKey)
+	bz := types.MustMarshalVote(k.cdc, vote)
+	store.Set(types.GetVoteKey(vote.PollId, sdk.MustAccAddressFromBech32(vote.VoterAddress)), bz)
+}
+
+// GetVote returns vote object for the given voter and poll id.
+func (k Keeper) GetVote(ctx sdk.Context, pollID uint64, voterAddress sdk.AccAddress) (vote types.Vote, found bool) {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.GetVoteKey(pollID, voterAddress))
+	if bz == nil {
+		return
+	}
+	vote = types.MustUnmarshalVote(k.cdc, bz)
+	return vote, true
+}

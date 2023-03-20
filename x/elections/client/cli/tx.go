@@ -38,6 +38,7 @@ func GetTxCmd() *cobra.Command {
 		NewAdminCreateCandidateCmd(),
 		NewAdminCreatePollCmd(),
 		NewCreateNewVoterRequesCmd(),
+		NewVoteCmd(),
 	)
 
 	return cmd
@@ -220,6 +221,49 @@ $ %s tx %s register-voter 987547 --from mykey
 			}
 
 			msg := types.NewMsgNewVoterRegisterationRequest(clientCtx.GetFromAddress().String(), otp)
+			if err = msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewVoteCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "vote [poll_id] [candidate_id]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Add vote to the poll",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Add vote to the poll.
+Example:
+$ %s tx %s vote 1 1 --from mykey
+`,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			pollId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("parse poll_id: %w", err)
+			}
+
+			candidateId, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("parse candidate_id: %w", err)
+			}
+
+			msg := types.NewMsgVoteRequest(pollId, candidateId, clientCtx.GetFromAddress().String())
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}

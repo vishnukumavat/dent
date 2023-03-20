@@ -13,6 +13,7 @@ var (
 	_ sdk.Msg = (*MsgCreateCandidateRequest)(nil)
 	_ sdk.Msg = (*MsgCreatePollRequest)(nil)
 	_ sdk.Msg = (*MsgNewVoterRegisterationRequest)(nil)
+	_ sdk.Msg = (*MsgVoteRequest)(nil)
 )
 
 // Message types for the elections module.
@@ -21,6 +22,7 @@ const (
 	TypeMsgCreateCandidate                = "admin_create_candidate"
 	TypeMsgCreatePoll                     = "admin_create_poll"
 	TypeMsgVoterRegisteration             = "voter_registeration"
+	TypeVote                              = "vote"
 )
 
 func NewMsgAdminNewVoterRegistrationRequest(
@@ -133,7 +135,7 @@ func (msg MsgCreatePollRequest) ValidateBasic() error {
 	if msg.PollName == "" {
 		return sdkerrors.Wrapf(ErrCandidateNamePartyEmpty, "candidate name cannot be empty")
 	}
-	if msg.PollDuration < 0 {
+	if msg.PollDuration <= 0 {
 		return sdkerrors.Wrapf(ErrInvalidPollDuration, "poll duration should be positive")
 	}
 	return nil
@@ -183,6 +185,49 @@ func (msg MsgNewVoterRegisterationRequest) GetSignBytes() []byte {
 
 func (msg MsgNewVoterRegisterationRequest) GetSigners() []sdk.AccAddress {
 	addr, err := sdk.AccAddressFromBech32(msg.VoterWalletAddress)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{addr}
+}
+
+func NewMsgVoteRequest(
+	poolID, candidateID uint64,
+	voterAddress string,
+) *MsgVoteRequest {
+	return &MsgVoteRequest{
+		PollId:       poolID,
+		CandidateId:  candidateID,
+		VoterAddress: voterAddress,
+	}
+}
+
+func (msg MsgVoteRequest) Route() string { return RouterKey }
+
+func (msg MsgVoteRequest) Type() string {
+	return TypeMsgAdminVoterRegisterationRequest
+}
+
+func (msg MsgVoteRequest) ValidateBasic() error {
+	if _, err := sdk.AccAddressFromBech32(msg.VoterAddress); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid voter address: %v", err)
+	}
+	if msg.CandidateId <= 0 {
+		return sdkerrors.Wrapf(ErrInvalidPollDuration, "candidate id should be positive")
+	}
+
+	if msg.PollId <= 0 {
+		return sdkerrors.Wrapf(ErrInvalidPollDuration, "poll id should be positive")
+	}
+	return nil
+}
+
+func (msg MsgVoteRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+func (msg MsgVoteRequest) GetSigners() []sdk.AccAddress {
+	addr, err := sdk.AccAddressFromBech32(msg.VoterAddress)
 	if err != nil {
 		panic(err)
 	}

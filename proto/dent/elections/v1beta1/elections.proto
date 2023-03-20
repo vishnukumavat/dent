@@ -54,3 +54,8 @@ message Poll {
     ];
     bool is_ended = 7;
 }
+
+message Vote {
+    string voter_address = 1;
+    uint64 poll_id = 2;
+}

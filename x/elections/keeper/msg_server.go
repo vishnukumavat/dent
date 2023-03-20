@@ -54,3 +54,11 @@ func (m msgServer) VoterRegisteration(goCtx context.Context, msg *types.MsgNewVo
 	}
 	return &types.MsgNewVoterRegisterationResponse{}, nil
 }
+
+func (m msgServer) Vote(goCtx context.Context, msg *types.MsgVoteRequest) (*types.MsgVoteResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	if err := m.Keeper.Vote(ctx, msg); err != nil {
+		return nil, err
+	}
+	return &types.MsgVoteResponse{}, nil
+}

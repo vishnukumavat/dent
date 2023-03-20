@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/address"
 )
 
 const (
@@ -19,7 +20,7 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_elections"
 
-	AdminAddress = "dent1kcjmfa2rssd53uvtnsyzcme4njwntyya7xyhsw"
+	AdminAddress = "dent1vm67pa3d2ddsz898m6mfejkzjm9wa3p4cesuwd"
 
 	VoterOTPLimit                          = 999999
 	NewVoterAdminRequestExpirationDuration = time.Minute * 10
@@ -37,6 +38,8 @@ var (
 
 	LastPollIDKey = []byte{0xa6}
 	PollKeyPrefix = []byte{0xa7}
+
+	VoteKeyPrefix = []byte{0xa8}
 )
 
 // GetLastVoterRequestIDKey returns the store key to retrieve the last new voter request id.
@@ -97,6 +100,10 @@ func GetPollKey(pollID uint64) []byte {
 // GetAllPollKey returns the store key to retrieve the all polls.
 func GetAllPollKey() []byte {
 	return PollKeyPrefix
+}
+
+func GetVoteKey(pollID uint64, voterAddress sdk.AccAddress) []byte {
+	return append(append(VoteKeyPrefix, sdk.Uint64ToBigEndian(pollID)...), address.MustLengthPrefix(voterAddress)...)
 }
 
 // LengthPrefixString returns length-prefixed bytes representation

@@ -21,6 +21,9 @@ service Msg {
 
     // AdminCreatePoll defines a method for creating new poll
     rpc AdminCreatePoll(MsgCreatePollRequest) returns (MsgCreatPollResponse);
+
+    // Vote defines a method for adding vote on  poll
+    rpc Vote(MsgVoteRequest) returns (MsgVoteResponse);
 }
 
 
@@ -80,3 +83,11 @@ message MsgCreatePollRequest {
 } 
 
 message MsgCreatPollResponse {}
+
+message MsgVoteRequest {
+    uint64 poll_id = 1;
+    string voter_address = 2;
+    uint64 candidate_id = 3;
+}
+
+message MsgVoteResponse {}
