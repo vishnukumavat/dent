@@ -121,4 +121,4 @@ Your blockchain in development can be configured with `config.yml` and `app.toml
 
 # Architectural Diagram
 
-<img width="831" alt="image" src="https://user-images.githubusercontent.com/43311385/226438404-c07b2732-1a33-4625-8e08-1822e06d51fb.png">
+<img width="833" alt="image" src="https://user-images.githubusercontent.com/43311385/226439106-ade99357-957c-4306-b90f-465aca0f7487.png">
