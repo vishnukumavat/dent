@@ -6,6 +6,7 @@
     - [Why Blockchain](#why-only-blockchain-why-not-traditional-web20-tech)
 
 - [Blockchain Setup](#project-setup)
+- [Architectural Flow](#architectural-diagram)
 
 # Project Explanation
 
@@ -116,3 +117,8 @@ $ dent start
 - ### Configure
 
 Your blockchain in development can be configured with `config.yml` and `app.toml` located under `~/.dent/config/`.
+
+
+# Architectural Diagram
+
+<img width="831" alt="image" src="https://user-images.githubusercontent.com/43311385/226438404-c07b2732-1a33-4625-8e08-1822e06d51fb.png">
